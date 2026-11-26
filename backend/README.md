@@ -4,22 +4,36 @@ FastAPI + SQLAlchemy 2 + PostgreSQL. Interactive docs at `/docs`, schema at `/op
 
 ## Run locally
 
-```bash
-cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+Use Python 3.12. Run these commands from the repository root. The local API uses a SQLite database file by default.
 
-python -m scripts.seed_dev ../sample-data --reset   # SQLite file by default
-uvicorn app.main:app --reload                        # http://127.0.0.1:8000/docs
-pytest && ruff check .
+### Windows PowerShell
+
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
-Against PostgreSQL:
+### Linux or macOS
+
+```bash
+cd backend
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+.venv/bin/python -m uvicorn app.main:app --reload
+```
+
+Open [the health endpoint](http://127.0.0.1:8000/api/health) and expect `{"status":"ok","database":"ok"}`. The [API documentation](http://127.0.0.1:8000/docs) is available while the server is running.
+
+To load the course data into a fresh local database, run `python -m scripts.seed_dev ../sample-data` from `backend/` using the virtual environment's Python. Run `python -m pytest -q`, `python -m ruff check .`, and `python -m ruff format --check .` there to repeat the backend CI checks.
+
+### Local PostgreSQL development
 
 ```bash
 export DATABASE_URL="postgresql+psycopg://cb_api:<password>@10.10.10.13:5432/company_brain"
-python -m scripts.seed_dev ../sample-data --reset
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+.venv/bin/python -m scripts.seed_dev ../sample-data
+.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 ## Layout
