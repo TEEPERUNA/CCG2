@@ -1,0 +1,25 @@
+# /etc/systemd/system/company-brain-api.service  (LXC 2)
+# Install:
+#   useradd --system --home /opt/company-brain cb
+#   git clone <repo> /opt/company-brain && cd /opt/company-brain/backend
+#   python3 -m venv .venv && .venv/bin/pip install .
+#   printf 'DATABASE_URL=postgresql+psycopg://cb_api:<password>@<lxc3-ip>:5432/company_brain\n' > /etc/company-brain.env
+#   chmod 600 /etc/company-brain.env
+#   systemctl daemon-reload && systemctl enable --now company-brain-api
+#   curl http://127.0.0.1:8000/api/health
+
+[Unit]
+Description=Company Brain API (FastAPI)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=cb
+WorkingDirectory=/opt/company-brain/backend
+EnvironmentFile=/etc/company-brain.env
+ExecStart=/opt/company-brain/backend/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2 --proxy-headers
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
