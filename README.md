@@ -94,20 +94,18 @@ A customer calls at 17:30 on Friday 20 November 2026: laptop **LT-1042** will no
 ```
 company-brain/
 ├── backend/       FastAPI app (LXC 2). See backend/README.md for the API docs.
-├── client/        PySide6 desktop app (to do)
+├── client/        PySide6 desktop client and API connection check
 ├── deployment/    Nginx, systemd and container setup (to do)
 ├── docs/          Architecture and deployment docs (to do)
 └── sample-data/   Course-supplied sample data (CSV, JSON, PDF, Markdown)
 ```
 
-## Quick start (backend)
+## Quick start
 
-```bash
-cd backend
-python -m venv .venv
-.venv\Scripts\activate            # Windows  (Linux/macOS: source .venv/bin/activate)
-pip install -e ".[dev]"
-python -m scripts.seed_dev ../sample-data --reset
-uvicorn app.main:app --reload     # http://127.0.0.1:8000/docs
-pytest
-```
+Use Python 3.12 to match CI. The backend and desktop client each have their own virtual environment and `pyproject.toml`.
+
+1. Start FastAPI locally with SQLite. See the [backend setup](backend/README.md#run-locally) for Windows and Linux commands and backend checks.
+2. In a second terminal, install and launch the [Windows desktop client](client/README.md#run-on-windows).
+3. Click **Check server connection**. The window should show **Backend and database are reachable.**
+
+The local connection check goes directly to FastAPI. The deployed client connects through Nginx, and FastAPI uses PostgreSQL.
